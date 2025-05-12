@@ -1,18 +1,191 @@
-<form method="POST">
-    {% csrf_token %} 
-    <input type="text" name="todo" placeholder="Enter your todo" value="">
-    <input type="submit" value="Add"/>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo List</title>
+    <style>
+        :root {
+            --primary-color: #6e34d8;
+            --primary-dark: #4d29b9;
+            --primary-light: #e0d6fa;
+            --text-color: #2d3748;
+            --danger: #e74c3c;
+            --warning: #f1c40f;
+            --success: #2ecc71;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .todo-container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: transform 0.3s ease;
+        }
+        
+        .todo-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .todo-form {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        
+        .todo-form input[type="text"] {
+            flex-grow: 1;
+            padding: 14px;
+            border: 2px solid rgba(110, 52, 219, 0.2);
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+        
+        .todo-form input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(110, 52, 219, 0.1);
+        }
+        
+        .todo-form input[type="submit"] {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .todo-form input[type="submit"]:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(110, 52, 219, 0.2);
+        }
+        
+        .todo-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .todo-list li {
+            background: rgba(255, 255, 255, 0.7);
+            border-left: 4px solid var(--primary-color);
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .todo-list li:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .todo-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .todo-actions a {
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .todo-actions .edit {
+            background-color: var(--warning);
+            color: #fff;
+        }
+        
+        .todo-actions .edit:hover {
+            background-color: #e6b800;
+            transform: translateY(-1px);
+        }
+        
+        .todo-actions .delete {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .todo-actions .delete:hover {
+            background-color: #c0392b;
+            transform: translateY(-1px);
+        }
+        
+        .divider {
+            border-top: 2px solid rgba(110, 52, 219, 0.1);
+            margin: 25px 0;
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: #718096;
+            padding: 30px;
+            font-style: italic;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            border: 1px dashed rgba(110, 52, 219, 0.2);
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+            .todo-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="todo-container">
+        <form method="POST" class="todo-form">
+            {% csrf_token %}
+            <input type="text" name="todo" placeholder="✏️ Enter your todo" value="" required>
+            <input type="submit" value="Add">
+        </form>
 
-<h1>------------------</h1>
+        <div class="divider"></div>
 
-<ol>
-    {% for todo in todos %}
-        <li>
-            {{ todo.text }}
-            <a href="{% url 'edit_todo' todo.id %}">Edit</a>
-            <a href="{% url 'delete_todo' todo.id %}">Delete</a>
-        </li>
-    {% endfor %}
-</ol>
-
+        <ol class="todo-list">
+            {% for todo in todos %}
+            <li>
+                <span>{{ todo.text }}</span>
+                <div class="todo-actions">
+                    <a href="{% url 'edit_todo' todo.id %}" class="edit">Edit</a>
+                    <a href="{% url 'delete_todo' todo.id %}" class="delete">Delete</a>
+                </div>
+            </li>
+            {% empty %}
+            <div class="empty-state">🎯 No todos yet. Add your first task above!</div>
+            {% endfor %}
+        </ol>
+    </div>
+</body>
+</html>

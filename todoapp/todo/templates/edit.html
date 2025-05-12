@@ -1,6 +1,99 @@
-<h1>Edit TO DO</h1>
-<form method="POST" action="{% url 'edit_todo' todo.id %}">
-    {% csrf_token %} 
-    <input type="text" name="todo" placeholder="Enter your todo" value="{{ todo.text }}">
-    <input type="submit" value="Edit"/>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Todo</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            line-height: 1.6;
+        }
+        .edit-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background-color:rgb(130, 52, 219);
+        }
+        .edit-form {
+            display: flex;
+            flex-direction: column;
+        }
+        .edit-form input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solidrgb(102, 52, 219);
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        .edit-form input[type="text"]:focus {
+            outline: none;
+            border-color: #2980b9;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+        .edit-form input[type="submit"] {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        .edit-form input[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+        .edit-form input[type="submit"]:active {
+            transform: scale(0.98);
+        }
+        @media (max-width: 480px) {
+            .edit-container {
+                width: 90%;
+                padding: 20px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="edit-container">
+        <h1>Edit TO DO</h1>
+        <form method="POST" action="{% url 'edit_todo' todo.id %}" class="edit-form">
+            {% csrf_token %}
+            <input type="text" name="todo" placeholder="Enter your updated todo" value="{{ todo.text }}">
+            <input type="submit" value="Update Todo">
+        </form>
+    </div>
+</body>
+</html>
